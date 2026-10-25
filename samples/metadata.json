@@ -1,0 +1,36 @@
+{
+  "samples": [
+    {
+      "id": "sample_01",
+      "title": "Banjir Pemukiman Sub-Urban",
+      "filename": "sample_01.jpg",
+      "url": "/samples/sample_01.jpg",
+      "description": "Area pemukiman dengan atap genteng dan jalan terisolir oleh genangan banjir.",
+      "expected_risk": "Siaga (Medium Risk)"
+    },
+    {
+      "id": "sample_02",
+      "title": "Kawasan Pertanian Tergenang",
+      "filename": "sample_02.jpg",
+      "url": "/samples/sample_02.jpg",
+      "description": "Pematang sawah dan petak lahan basah terendam limpasan air hujan.",
+      "expected_risk": "Siaga (Medium Risk)"
+    },
+    {
+      "id": "sample_03",
+      "title": "Luapan Sungai & Jembatan",
+      "filename": "sample_03.jpg",
+      "url": "/samples/sample_03.jpg",
+      "description": "Limpasan air sungai memotong jalur jembatan dan vegetasi tepian.",
+      "expected_risk": "Waspada (Low Risk)"
+    },
+    {
+      "id": "sample_04",
+      "title": "Daratan Kering / Non-Banjir",
+      "filename": "sample_04.jpg",
+      "url": "/samples/sample_04.jpg",
+      "description": "Kawasan perkotaan kering dengan jalan aspal tanpa indikasi genangan air (uji negatif).",
+      "expected_risk": "Aman (Normal)"
+    }
+  ]
+}

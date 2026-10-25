@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dokumentasi Model & Arsitektur - FloodDetec AI</title>
+  <meta name="description" content="Dokumentasi teknis arsitektur deep learning Attention U-Net, dataset training Kaggle, dan spesifikasi API FloodDetec AI.">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body data-theme="dark">
+  <div class="workbench-layout">
+    
+    <!-- Top Header & Navigation -->
+    <header class="app-header">
+      <div class="header-inner">
+        <a href="/" class="header-brand" aria-label="FloodDetec AI Beranda">
+          <div class="brand-symbol" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+            </svg>
+          </div>
+          <div class="brand-info">
+            <span class="brand-title">FloodDetec AI</span>
+            <span class="brand-subtitle">Sistem Segmentasi Area Genangan Banjir Berbasis AI</span>
+          </div>
+        </a>
+
+        <!-- Central Navigation Links -->
+        <nav class="header-nav" aria-label="Navigasi Utama">
+          <a href="/" class="nav-link">Beranda</a>
+          <a href="/studio" class="nav-link">Studio Analisis</a>
+          <a href="/model" class="nav-link active" aria-current="page">Dokumentasi Model</a>
+        </nav>
+
+        <div class="header-actions">
+          <div class="engine-badge" id="engineStatusBadge" title="Status Inferensi Backend">
+            <span class="status-indicator"></span>
+            <span class="engine-name" id="engineStatusLabel">Attention U-Net ONNX</span>
+          </div>
+          <button type="button" class="theme-btn" id="themeToggleBtn" aria-label="Ganti Tema Tampilan" title="Ganti Tema">
+            <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Documentation Content -->
+    <main class="docs-main">
+      
+      <!-- Docs Header -->
+      <section class="docs-hero-section">
+        <div class="docs-hero-inner">
+          <div class="hero-meta-lead">Spesifikasi Teknis &bull; Arsitektur Model</div>
+          <h1 class="docs-title">Arsitektur Model Attention U-Net & Dokumentasi Sistem</h1>
+          <p class="docs-subtitle">
+            Rincian mendalam mengenai struktur neural network, mekanisme Attention Gate matematis, dataset pelatihan Kaggle, dan panduan integrasi REST API.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 1: Dataset & Training Overview -->
+      <section class="docs-section" aria-labelledby="datasetHeading">
+        <div class="docs-section-card">
+          <h2 class="docs-section-title" id="datasetHeading">1. Dataset & Pelatihan Model (Kaggle)</h2>
+          <p class="docs-text">
+            Model dilatih menggunakan dataset Kaggle <strong>Flood Area Segmentation</strong> dengan bobot biner tersimpan dalam berkas <code>model_training.h5</code> (122.6 MB). Bobot kemudian dikonversi menjadi representasi ONNX teroptimasi untuk inferensi CPU yang sangat efisien.
+          </p>
+
+          <div class="specs-grid">
+            <div class="spec-item">
+              <span class="spec-label">Dimensi Input Citra</span>
+              <span class="spec-value mono-text">256 &times; 256 &times; 3 (RGB)</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Format Output Masker</span>
+              <span class="spec-value mono-text">256 &times; 256 &times; 1 (Probabilitas)</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Penskalaan Normalisasi</span>
+              <span class="spec-value mono-text">Float32 [0.0, 1.0]</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Fungsi Aktivasi Terakhir</span>
+              <span class="spec-value mono-text">Sigmoid [0, 1]</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Optimizer Pelatihan</span>
+              <span class="spec-value mono-text">Adam (lr=0.001, &beta;1=0.9, &beta;2=0.999)</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Fungsi Loss</span>
+              <span class="spec-value mono-text">Binary Crossentropy</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Attention U-Net Architecture -->
+      <section class="docs-section" aria-labelledby="archHeading">
+        <div class="docs-section-card">
+          <h2 class="docs-section-title" id="archHeading">2. Arsitektur Jaringan Attention U-Net</h2>
+          <p class="docs-text">
+            Attention U-Net merupakan penyempurnaan dari arsitektur U-Net standar. Pada U-Net konvensional, seluruh informasi dari encoder dilewatkan langsung ke decoder melalui skip connection, yang kerap membawa noise latar belakang (vegetasi, atap rumah, bayangan). Attention U-Net menambahkan <strong>Attention Gates</strong> yang memfilter fitur encoder secara adaptif sebelum digabungkan.
+          </p>
+
+          <!-- Mathematical Formula Card -->
+          <div class="formula-box">
+            <h3 class="formula-title">Formulasi Matematis Attention Gate</h3>
+            <p class="formula-desc">
+              Koefisien atensi $\alpha \in [0, 1]$ dihitung dari kombinasi linear fitur spasial encoder ($x_l$) dan sinyal gating decoder ($g$):
+            </p>
+            <div class="math-display">
+              <code>&psi; = &sigma;1( W_x &times; x_l + W_g &times; g + b_g )</code><br>
+              <code>&alpha; = &sigma;2( W_&psi; &times; &psi; + b_&psi; )</code><br>
+              <code>x_filtered = &alpha; &odot; x_l</code>
+            </div>
+            <p class="formula-notes">
+              Di mana $\sigma_1$ adalah aktivasi ReLU, $\sigma_2$ adalah fungsi Sigmoid untuk menghasilkan bobot atensi bernilai 0 hingga 1, dan $\odot$ adalah operasi perkalian per elemen (*element-wise multiplication*).
+            </p>
+          </div>
+
+          <!-- Network Stages Breakdown -->
+          <div class="network-stages-grid">
+            <div class="stage-card">
+              <div class="stage-badge">Encoder (4 Tahap)</div>
+              <ul class="stage-list">
+                <li>Tahap 1: 32 filter &bull; 2&times; Conv2D (3&times;3) + ReLU + MaxPool (2&times;2)</li>
+                <li>Tahap 2: 64 filter &bull; 2&times; Conv2D (3&times;3) + ReLU + MaxPool (2&times;2)</li>
+                <li>Tahap 3: 128 filter &bull; 2&times; Conv2D (3&times;3) + ReLU + MaxPool (2&times;2)</li>
+                <li>Tahap 4: 256 filter &bull; 2&times; Conv2D (3&times;3) + ReLU + MaxPool (2&times;2)</li>
+              </ul>
+            </div>
+
+            <div class="stage-card bottleneck-card">
+              <div class="stage-badge">Bottleneck</div>
+              <p class="stage-desc">
+                512 filter &bull; 2&times; Conv2D (3&times;3, padding='same') + Batch Normalization + ReLU. Mengompresi representasi semantik global terdalam pada resolusi 16&times;16 piksel.
+              </p>
+            </div>
+
+            <div class="stage-card">
+              <div class="stage-badge">Decoder & Attention Gates (4 Tahap)</div>
+              <ul class="stage-list">
+                <li>Tahap 4: Attention Gate (256) + Upsampling (2&times;) + Concat + 2&times; Conv2D</li>
+                <li>Tahap 3: Attention Gate (128) + Upsampling (2&times;) + Concat + 2&times; Conv2D</li>
+                <li>Tahap 2: Attention Gate (64) + Upsampling (2&times;) + Concat + 2&times; Conv2D</li>
+                <li>Tahap 1: Attention Gate (32) + Upsampling (2&times;) + Concat + 2&times; Conv2D</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Flood Severity Classification -->
+      <section class="docs-section" aria-labelledby="severityDocsHeading">
+        <div class="docs-section-card">
+          <h2 class="docs-section-title" id="severityDocsHeading">3. Matriks Klasifikasi Bahaya Banjir</h2>
+          <p class="docs-text">
+            Berdasarkan rekomendasi mitigasi bencana geospasial, luas genangan air dikategorikan menjadi 4 tingkatan keparahan:
+          </p>
+
+          <div class="severity-table-wrapper">
+            <table class="severity-table">
+              <thead>
+                <tr>
+                  <th scope="col">Status</th>
+                  <th scope="col">Ambang Persentase</th>
+                  <th scope="col">Warna Indikator</th>
+                  <th scope="col">Kondisi Geospasial</th>
+                  <th scope="col">Tindakan Mitigasi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="matrix-badge badge-aman">Aman</span></td>
+                  <td class="mono-text">&lt; 5.0%</td>
+                  <td>Hijau Emerald (<code>#10B981</code>)</td>
+                  <td>Kondisi air normal, mengalir dalam saluran primer/sungai.</td>
+                  <td>Monitoring rutin pintu air dan saluran drainase.</td>
+                </tr>
+                <tr>
+                  <td><span class="matrix-badge badge-waspada">Waspada</span></td>
+                  <td class="mono-text">5.0% &ndash; 20.0%</td>
+                  <td>Biru Kobalt (<code>#3B82F6</code>)</td>
+                  <td>Genangan air melimpas ke bantaran sungai atau lahan rendah.</td>
+                  <td>Siapkan pompa bergerak dan beri peringatan ke warga sekitar bantaran.</td>
+                </tr>
+                <tr>
+                  <td><span class="matrix-badge badge-siaga">Siaga</span></td>
+                  <td class="mono-text">20.0% &ndash; 50.0%</td>
+                  <td>Oranye Amber (<code>#F59E0B</code>)</td>
+                  <td>Air menggenangi kawasan pemukiman padat dan jalan utama.</td>
+                  <td>Aktivasi jalur evakuasi, siagakan perahu karet, dan amankan instalasi listrik.</td>
+                </tr>
+                <tr>
+                  <td><span class="matrix-badge badge-awas">Awas</span></td>
+                  <td class="mono-text">&gt; 50.0%</td>
+                  <td>Merah Crimson (<code>#EF4444</code>)</td>
+                  <td>Banjir bandang/luapan masif menenggelamkan sebagian besar kawasan.</td>
+                  <td>Evakuasi darurat total, dirikan posko pengungsian dan dapur umum.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: REST API Specification -->
+      <section class="docs-section" aria-labelledby="apiDocsHeading">
+        <div class="docs-section-card">
+          <h2 class="docs-section-title" id="apiDocsHeading">4. Spesifikasi REST API</h2>
+          <p class="docs-text">
+            Sistem menyediakan antarmuka REST API berbasis FastAPI yang dapat diintegrasikan dengan aplikasi webGIS, sistem informasi geospasial (SIG), atau dashboard kebencanaan lainnya:
+          </p>
+
+          <div class="api-endpoints-list">
+            
+            <div class="endpoint-block">
+              <div class="endpoint-header">
+                <span class="http-method method-post">POST</span>
+                <span class="endpoint-path">/api/segment</span>
+              </div>
+              <p class="endpoint-desc">Mengunggah foto banjir baru untuk dieksekusi oleh model Attention U-Net.</p>
+              <div class="endpoint-params">
+                <strong>Parameter Form-Data:</strong>
+                <ul>
+                  <li><code>file</code> (UploadFile, Wajib): Berkas citra JPG atau PNG (maks 10 MB).</li>
+                  <li><code>threshold</code> (float, Opsional): Ambang batas probabilitas biner (default 0.50, range 0.05 s.d. 0.95).</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="endpoint-block">
+              <div class="endpoint-header">
+                <span class="http-method method-post">POST</span>
+                <span class="endpoint-path">/api/recalculate</span>
+              </div>
+              <p class="endpoint-desc">Menyesuaikan ambang batas threshold pada citra yang sedang aktif tanpa melakukan inferensi ulang.</p>
+              <div class="endpoint-params">
+                <strong>Payload JSON:</strong>
+                <code>{"threshold": 0.65}</code>
+              </div>
+            </div>
+
+            <div class="endpoint-block">
+              <div class="endpoint-header">
+                <span class="http-method method-get">GET</span>
+                <span class="endpoint-path">/api/samples</span>
+              </div>
+              <p class="endpoint-desc">Mengambil daftar citra sampel uji bawaan sistem beserta metadata perkiraan risiko banjir.</p>
+            </div>
+
+            <div class="endpoint-block">
+              <div class="endpoint-header">
+                <span class="http-method method-get">GET</span>
+                <span class="endpoint-path">/api/health</span>
+              </div>
+              <p class="endpoint-desc">Memeriksa status kesiapan model Attention U-Net dan spesifikasi engine ONNX Runtime.</p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Direct CTA Banner -->
+      <section class="cta-banner-section" aria-label="Aksi Mulai">
+        <div class="cta-banner-card">
+          <div class="cta-banner-text">
+            <h2 class="cta-banner-title">Mulai Uji Coba di Studio Analisis</h2>
+            <p class="cta-banner-desc">Eksplorasi kemampuan segmentasi model Attention U-Net secara visual dengan foto Anda.</p>
+          </div>
+          <a href="/studio" class="cta-primary-btn banner-btn">
+            <span>Buka Studio Analisis</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-inner">
+        <p>FloodDetec AI &bull; Deteksi Banjir Berbasis AI &bull; Model Attention U-Net</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Shared Theme & Engine Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const body = document.body;
+      const themeToggleBtn = document.getElementById("themeToggleBtn");
+      
+      const savedTheme = localStorage.getItem("flooddetec_theme") || localStorage.getItem("geoflood_theme") || "dark";
+      body.setAttribute("data-theme", savedTheme);
+
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", () => {
+          const currentTheme = body.getAttribute("data-theme");
+          const nextTheme = currentTheme === "dark" ? "light" : "dark";
+          body.setAttribute("data-theme", nextTheme);
+          localStorage.setItem("flooddetec_theme", nextTheme);
+        });
+      }
+
+      // Check model engine health status
+      fetch("/api/health")
+        .then(res => res.json())
+        .then(data => {
+          const badge = document.getElementById("engineStatusLabel");
+          if (badge && data.status === "healthy") {
+            badge.textContent = `Attention U-Net ${data.engine || "ONNX"}`;
+          }
+        })
+        .catch(() => {});
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FloodDetec AI - Deteksi Banjir Berbasis AI</title>
+  <meta name="description" content="Sistem kecerdasan buatan untuk deteksi dan segmentasi area genangan banjir berbasis model deep learning Attention U-Net.">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body data-theme="dark">
+  <div class="workbench-layout">
+    
+    <!-- Top Header & Navigation -->
+    <header class="app-header">
+      <div class="header-inner">
+        <a href="/" class="header-brand" aria-label="FloodDetec AI Beranda">
+          <div class="brand-symbol" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+            </svg>
+          </div>
+          <div class="brand-info">
+            <span class="brand-title">FloodDetec AI</span>
+            <span class="brand-subtitle">Sistem Segmentasi Area Genangan Banjir Berbasis AI</span>
+          </div>
+        </a>
+
+        <!-- Central Navigation Links -->
+        <nav class="header-nav" aria-label="Navigasi Utama">
+          <a href="/" class="nav-link active" aria-current="page">Beranda</a>
+          <a href="/studio" class="nav-link">Studio Analisis</a>
+          <a href="/model" class="nav-link">Dokumentasi Model</a>
+        </nav>
+
+        <div class="header-actions">
+          <div class="engine-badge" id="engineStatusBadge" title="Status Inferensi Backend">
+            <span class="status-indicator"></span>
+            <span class="engine-name" id="engineStatusLabel">Attention U-Net ONNX</span>
+          </div>
+          <button type="button" class="theme-btn" id="themeToggleBtn" aria-label="Ganti Tema Tampilan" title="Ganti Tema">
+            <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Landing Content -->
+    <main class="landing-main">
+      
+      <!-- Hero Section -->
+      <section class="hero-section" aria-label="Pengenalan Sistem">
+        <div class="hero-content">
+          <div class="hero-meta-lead">Deteksi Banjir Berbasis AI &bull; Computer Vision</div>
+          <h1 class="hero-title">Deteksi & Segmentasi Area Genangan Banjir Berbasis AI</h1>
+          <p class="hero-description">
+            Sistem kecerdasan buatan untuk mendeteksi batas genangan air dan menghitung persentase luas banjir secara otomatis. Ditenagai model deep learning Attention U-Net yang secara akurat memisahkan area tergenang dari daratan, bangunan, dan objek sekitarnya.
+          </p>
+          <div class="hero-cta-group">
+            <a href="/studio" class="cta-primary-btn">
+              Buka Studio Analisis
+            </a>
+            <a href="/model" class="cta-secondary-btn">
+              Dokumentasi Arsitektur
+            </a>
+          </div>
+        </div>
+
+        <!-- Hero Preview Showcase -->
+        <div class="hero-showcase" aria-hidden="true">
+          <div class="showcase-card">
+            <div class="showcase-header">
+              <span class="showcase-pill">Inspeksi Visual Deteksi Banjir</span>
+              <span class="showcase-meta">Resolusi 256 &times; 256 piksel</span>
+            </div>
+            <div class="showcase-image-wrapper">
+              <img src="/samples/sample_01.jpg" alt="Foto Area Tergenang Banjir" class="showcase-img">
+              <div class="showcase-overlay-sim">
+                <div class="water-contour-badge">Batas Genangan Banjir AI</div>
+              </div>
+            </div>
+            <div class="showcase-footer">
+              <div class="showcase-stat">
+                <span class="stat-caption">Status Risiko</span>
+                <span class="stat-highlight status-siaga">Siaga (Meluas)</span>
+              </div>
+              <div class="showcase-stat">
+                <span class="stat-caption">Rasio Luasan</span>
+                <span class="stat-highlight">38.45%</span>
+              </div>
+              <div class="showcase-stat">
+                <span class="stat-caption">Latensi CPU</span>
+                <span class="stat-highlight">~42 ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Processing Pipeline (Structured Engineering Architecture) -->
+      <section class="section-block" aria-labelledby="pipelineHeading">
+        <div class="section-header">
+          <h2 class="section-title" id="pipelineHeading">Tahapan Pemrosesan Deteksi Banjir</h2>
+          <p class="section-subtitle">Alur komputasi cerdas dari masukan foto hingga evaluasi luas genangan banjir.</p>
+        </div>
+
+        <div class="pipeline-layout">
+          <div class="pipeline-stage-card">
+            <span class="pipeline-tag">Tahap 1 &bull; Ingestion</span>
+            <h3 class="pipeline-title">Pra-Pemrosesan Citra</h3>
+            <p class="pipeline-desc">
+              Decoding berkas foto (JPG/PNG), penyesuaian resolusi ke format tensor 256 &times; 256 piksel, serta penskalaan nilai kanal RGB ke rentang normalisasi numerik [0.0, 1.0].
+            </p>
+          </div>
+
+          <div class="pipeline-stage-card accented">
+            <span class="pipeline-tag">Tahap 2 &bull; Attention Neural Gate</span>
+            <h3 class="pipeline-title">Segmentasi Semantik Banjir</h3>
+            <p class="pipeline-desc">
+              Ekstraksi fitur multi-skala melalui 4 tahap encoder dan bottleneck 512 kanal. Modul Attention Gate memfokuskan pembobotan model pada area berair dan menekan informasi non-banjir.
+            </p>
+          </div>
+
+          <div class="pipeline-stage-card">
+            <span class="pipeline-tag">Tahap 3 &bull; Analisis Luasan</span>
+            <h3 class="pipeline-title">Kalkulasi Luas & Tingkat Bahaya</h3>
+            <p class="pipeline-desc">
+              Penerapan ambang batas probabilitas adaptif, ekstraksi garis kontur genangan, kalkulasi persentase luas basah, serta pengelompokan tingkat keparahan banjir (Aman, Waspada, Siaga, Awas).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Engineering Specifications Panel -->
+      <section class="section-block" aria-labelledby="specsHeading">
+        <div class="section-header">
+          <h2 class="section-title" id="specsHeading">Spesifikasi Teknis & Inferensi Model AI</h2>
+          <p class="section-subtitle">Karakteristik komputasi dan performa model deep learning Attention U-Net.</p>
+        </div>
+
+        <div class="specs-panel-card">
+          <div class="specs-grid">
+            <div class="spec-item">
+              <span class="spec-label">Arsitektur Dasar</span>
+              <span class="spec-value">Attention U-Net (4 Encoder & Decoder)</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Dimensi Tensor Input</span>
+              <span class="spec-value mono-text">(1, 256, 256, 3) RGB Float32</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Dimensi Probability Map</span>
+              <span class="spec-value mono-text">(1, 256, 256, 1) Sigmoid</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Runtime Engine</span>
+              <span class="spec-value">ONNX Runtime (Optimal di CPU Standar)</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Rentang Ambang Batas</span>
+              <span class="spec-value mono-text">0.10 s.d. 0.90 (Penyesuaian Real-Time)</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Rata-rata Waktu Inferensi</span>
+              <span class="spec-value mono-text">30 - 50 ms (CPU Standar)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Flood Severity Matrix Preview -->
+      <section class="section-block" aria-labelledby="severityHeading">
+        <div class="section-header">
+          <h2 class="section-title" id="severityHeading">Matriks Klasifikasi Bahaya Banjir</h2>
+          <p class="section-subtitle">Standar acuan tingkat keparahan berdasarkan persentase luas genangan air pada area pengamatan.</p>
+        </div>
+
+        <div class="severity-table-wrapper">
+          <table class="severity-table">
+            <thead>
+              <tr>
+                <th scope="col">Tingkat Risiko</th>
+                <th scope="col">Luas Genangan</th>
+                <th scope="col">Kondisi Lingkungan</th>
+                <th scope="col">Rekomendasi Tindakan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="matrix-badge badge-aman">Aman</span>
+                </td>
+                <td class="mono-text">&lt; 5.0%</td>
+                <td>Debit air normal pada saluran pembuangan utama atau waduk.</td>
+                <td>Pemantauan berkala dan pembersihan sedimentasi saluran air.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="matrix-badge badge-waspada">Waspada</span>
+                </td>
+                <td class="mono-text">5.0% &ndash; 19.9%</td>
+                <td>Genangan air parsial pada area bantaran atau dataran rendah.</td>
+                <td>Siagakan pompa air dan pantau pintu air lingkungan.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="matrix-badge badge-siaga">Siaga</span>
+                </td>
+                <td class="mono-text">20.0% &ndash; 49.9%</td>
+                <td>Air meluap ke kawasan pemukiman, halaman, dan jalan lokal.</td>
+                <td>Aktivasi posko evakuasi dan batasi akses kendaraan.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="matrix-badge badge-awas">Awas</span>
+                </td>
+                <td class="mono-text">&ge; 50.0%</td>
+                <td>Luapan banjir skala besar melumpuhkan akses dan infrastruktur.</td>
+                <td>Evakuasi darurat menyeluruh dan pengerahan tim tanggap bencana.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Bottom Direct CTA Banner -->
+      <section class="cta-banner-section" aria-label="Aksi Mulai">
+        <div class="cta-banner-card">
+          <div class="cta-banner-text">
+            <h2 class="cta-banner-title">Uji Deteksi Banjir Berbasis AI Sekarang</h2>
+            <p class="cta-banner-desc">Jalankan inferensi model Attention U-Net pada foto Anda atau gunakan data sampel yang tersedia di Studio Analisis.</p>
+          </div>
+          <a href="/studio" class="cta-primary-btn banner-btn">
+            Masuk ke Studio Analisis
+          </a>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-inner">
+        <p>FloodDetec AI &bull; Deteksi Banjir Berbasis AI &bull; Model Attention U-Net</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Shared Theme & Engine Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const body = document.body;
+      const themeToggleBtn = document.getElementById("themeToggleBtn");
+      
+      const savedTheme = localStorage.getItem("geoflood_theme") || "dark";
+      body.setAttribute("data-theme", savedTheme);
+
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", () => {
+          const currentTheme = body.getAttribute("data-theme");
+          const nextTheme = currentTheme === "dark" ? "light" : "dark";
+          body.setAttribute("data-theme", nextTheme);
+          localStorage.setItem("geoflood_theme", nextTheme);
+        });
+      }
+
+      // Check model engine health status
+      fetch("/api/health")
+        .then(res => res.json())
+        .then(data => {
+          const badge = document.getElementById("engineStatusLabel");
+          if (badge && data.status === "healthy") {
+            badge.textContent = `Attention U-Net ${data.engine || "ONNX"}`;
+          }
+        })
+        .catch(() => {});
+    });
+  </script>
+</body>
+</html>

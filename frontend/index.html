@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FloodDetec AI - Deteksi Banjir Berbasis AI</title>
+  <meta name="description" content="Sistem segmentasi dan analisis area genangan banjir berbasis model deep learning Attention U-Net.">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body data-theme="dark">
+  <div class="workbench-layout">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-inner">
+        <a href="/" class="header-brand" aria-label="FloodDetec AI Beranda">
+          <div class="brand-symbol" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+            </svg>
+          </div>
+          <div class="brand-info">
+            <span class="brand-title">FloodDetec AI</span>
+            <span class="brand-subtitle">Sistem Segmentasi Area Genangan Banjir Berbasis AI</span>
+          </div>
+        </a>
+
+        <!-- Central Navigation Links -->
+        <nav class="header-nav" aria-label="Navigasi Utama">
+          <a href="/" class="nav-link">Beranda</a>
+          <a href="/studio" class="nav-link active" aria-current="page">Studio Analisis</a>
+          <a href="/model" class="nav-link">Dokumentasi Model</a>
+        </nav>
+
+        <div class="header-actions">
+          <div class="engine-badge" id="engineStatusBadge" title="Status Inferensi Backend">
+            <span class="status-indicator"></span>
+            <span class="engine-name" id="engineStatusLabel">Attention U-Net ONNX</span>
+          </div>
+          <button type="button" class="theme-btn" id="themeToggleBtn" aria-label="Ganti Tema Tampilan" title="Ganti Tema">
+            <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Studio Body -->
+    <main class="workbench-main">
+      
+      <!-- Horizontal Quick-Bar: Upload trigger + Samples Track -->
+      <section class="quick-bar-section" aria-label="Bilah Pemilihan Foto Banjir">
+        <div class="quick-bar-container">
+          
+          <!-- Compact Dropzone Upload Card -->
+          <div class="upload-slot">
+            <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Tarik dan lepas foto banjir atau klik untuk memilih file">
+              <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" class="visually-hidden">
+              <div class="upload-icon-wrapper">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </div>
+              <div class="upload-texts">
+                <span class="upload-title">Unggah Foto Banjir</span>
+                <span class="upload-hint">Tarik foto atau klik (JPG/PNG &le; 10 MB)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Divider between Upload and Samples -->
+          <div class="quick-bar-divider" aria-hidden="true"></div>
+
+          <!-- Samples Horizontal Gallery -->
+          <div class="samples-scroll-area">
+            <div class="samples-header-inline">
+              <span class="samples-title">Sampel Foto Uji:</span>
+            </div>
+            <div class="samples-track" id="samplesGrid">
+              <!-- Populated dynamically via JavaScript -->
+              <div class="sample-skeleton"></div>
+              <div class="sample-skeleton"></div>
+              <div class="sample-skeleton"></div>
+              <div class="sample-skeleton"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Center Inspection Studio -->
+      <section class="canvas-studio-section" aria-label="Kanvas Inspeksi dan Analisis">
+        <div class="canvas-card">
+          
+          <!-- Integrated Canvas Toolbar -->
+          <div class="canvas-toolbar">
+            
+            <!-- Left: View Mode Tabs -->
+            <div class="toolbar-modes" role="tablist" aria-label="Mode Tampilan">
+              <button type="button" class="mode-tab active" role="tab" id="tabSplit" aria-selected="true" data-mode="split">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                  <line x1="12" y1="3" x2="12" y2="21"></line>
+                </svg>
+                <span>Split Perbandingan</span>
+              </button>
+              <button type="button" class="mode-tab" role="tab" id="tabOverlay" aria-selected="false" data-mode="overlay">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                  <path d="M2 17l10 5 10-5"></path>
+                  <path d="M2 12l10 5 10-5"></path>
+                </svg>
+                <span>Overlay Deteksi</span>
+              </button>
+              <button type="button" class="mode-tab" role="tab" id="tabBinary" aria-selected="false" data-mode="binary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                  <path d="M3 9h18"></path>
+                  <path d="M9 21V9"></path>
+                </svg>
+                <span>Masker Biner</span>
+              </button>
+              <button type="button" class="mode-tab" role="tab" id="tabOriginal" aria-selected="false" data-mode="original">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <span>Foto Asli</span>
+              </button>
+            </div>
+
+            <!-- Right: Inline Threshold Slider & Download -->
+            <div class="toolbar-controls">
+              
+              <div class="threshold-control-inline" title="Sesuaikan ambang batas probabilitas deteksi banjir">
+                <label for="thresholdInput" class="threshold-label">Threshold:</label>
+                <input 
+                  type="range" 
+                  id="thresholdInput" 
+                  min="0.10" 
+                  max="0.90" 
+                  step="0.05" 
+                  value="0.50" 
+                  class="threshold-range"
+                  aria-label="Ambang batas probabilitas deteksi banjir"
+                  aria-valuemin="0.10"
+                  aria-valuemax="0.90"
+                  aria-valuenow="0.50"
+                >
+                <span class="threshold-badge" id="thresholdValue">0.50</span>
+              </div>
+
+              <div class="toolbar-sep" aria-hidden="true"></div>
+
+              <button type="button" class="action-btn download-btn" id="downloadBtn" disabled aria-label="Unduh Hasil Deteksi Banjir">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Unduh Hasil</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Canvas Stage Container -->
+          <div class="visualizer-stage" id="visualizerStage">
+            
+            <!-- Empty State -->
+            <div class="ui-state empty-state" id="emptyState">
+              <div class="empty-icon-box">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+              </div>
+              <h2 class="empty-title">Siap Menganalisis Foto Banjir</h2>
+              <p class="empty-desc">Pilih salah satu sampel di bilah atas untuk pengujian instan, atau seret foto area banjir Anda ke area unggah.</p>
+            </div>
+
+            <!-- Loading State -->
+            <div class="ui-state loading-state hidden" id="loadingState" aria-live="polite">
+              <div class="loading-bar-wrapper">
+                <div class="loading-bar-indeterminate"></div>
+              </div>
+              <h2 class="loading-title">Memproses Inferensi Neural Network</h2>
+              <p class="loading-desc" id="loadingStatusText">Mengeksekusi model Attention U-Net...</p>
+            </div>
+
+            <!-- Error State -->
+            <div class="ui-state error-state hidden" id="errorState" role="alert">
+              <div class="error-icon-box">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </div>
+              <h2 class="error-title">Gagal Memproses Foto</h2>
+              <p class="error-desc" id="errorMessageText">Berkas tidak dapat diproses oleh model.</p>
+              <button type="button" class="retry-btn" id="retryBtn">Coba Lagi</button>
+            </div>
+
+            <!-- Active Visualizer Stage -->
+            <div class="comparison-container hidden" id="comparisonContainer">
+              <!-- Original RGB Base -->
+              <img id="imgOriginal" class="stage-img base-img" alt="Foto Asli">
+              
+              <!-- Tab-specific Single Views -->
+              <img id="imgOverlay" class="stage-img single-view-img hidden" alt="Overlay Deteksi Banjir">
+              <img id="imgBinary" class="stage-img single-view-img hidden" alt="Masker Biner Banjir">
+              
+              <!-- Split Layer Overlay -->
+              <div class="split-layer-wrapper" id="splitLayerWrapper">
+                <img id="imgSplitOverlay" class="stage-img split-img" alt="Overlay Hasil Segmentasi Banjir">
+              </div>
+
+              <!-- Visual Split Orientation Badges -->
+              <div class="split-guides" id="splitGuides" aria-hidden="true">
+                <span class="guide-tag guide-left">Foto Asli</span>
+                <span class="guide-tag guide-right">Deteksi Banjir AI</span>
+              </div>
+
+              <!-- Split Divider Bar -->
+              <div 
+                class="split-divider" 
+                id="splitDivider" 
+                tabindex="0" 
+                role="slider" 
+                aria-label="Penggeser Perbandingan Foto Asli dan Deteksi Banjir AI"
+                aria-valuemin="0" 
+                aria-valuemax="100" 
+                aria-valuenow="50"
+              >
+                <div class="divider-line"></div>
+                <div class="divider-handle">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Analytical KPI Ribbon -->
+          <div class="kpi-ribbon" id="analyticsBar">
+            
+            <div class="kpi-card">
+              <span class="kpi-label">Status Keparahan</span>
+              <div class="kpi-badge" id="riskBadge">
+                <span class="kpi-dot" id="riskBadgeDot"></span>
+                <span class="kpi-badge-text" id="riskBadgeText">Aman</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <span class="kpi-label">Persentase Genangan</span>
+              <div class="kpi-value-row">
+                <span class="kpi-value kpi-highlight" id="floodPercentVal">0.00%</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <span class="kpi-label">Piksel Tergenang</span>
+              <div class="kpi-value-row">
+                <span class="kpi-value" id="floodPixelsVal">0 / 65,536 px</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <span class="kpi-label">Latensi Inferensi</span>
+              <div class="kpi-value-row">
+                <span class="kpi-value" id="latencyVal">0.0 ms</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-inner">
+        <p>FloodDetec AI &bull; Deteksi Banjir Berbasis AI &bull; Model Attention U-Net</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
